@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>
-            DroneSell - Acquista il tuo drone
+            EasyFSL - Gestisci la Formazione Scuola Lavoro
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="e-drone_logo.png" type="image/png">
@@ -32,7 +32,7 @@
             <ul>
                 <li><a href="">Home</a></li>
                 <li><a onclick="document.getElementById('sezionePrincipale').scrollIntoView({behavior: 'smooth'});">Account</a></li>
-                <li><a href="carrello.html">Accedi</a></li>
+                <li><a onclick="document.getElementById('sezionePrincipale').scrollIntoView({behavior: 'smooth'});">Accedi</a></li>
                 <li><a href="FAQ.html">FAQ</a></li>
             </ul>
             <div class="hamburger">
