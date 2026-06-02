@@ -104,3 +104,11 @@ CREATE TABLE Chiavi (
     Tipo VARCHAR (30), -- Azienda o Studente o Tutor
     Password_cod VARCHAR (30)
 );
+
+CREATE TABLE Referente (
+    Ref_ID VARCHAR(30) PRIMARY KEY,
+    password VARCHAR(30) UNIQUE
+);
+
+INSERT INTO Referente (Ref_ID, password)
+VALUES ("referente1", "password1"), ("referente2", "password2"), ("referente3", "password3");
