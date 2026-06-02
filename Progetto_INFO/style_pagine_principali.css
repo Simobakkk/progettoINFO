@@ -2,3 +2,14 @@ body{
     height: 120vh;
     background-color: rgb(238, 236, 236);
 }
+
+.top-div{
+    background-color: rgb(68, 184, 85);
+    width: 100%;
+    padding: 30px 40px;
+}
+
+h1{
+    font-family: calibri;
+    color: white;
+}
