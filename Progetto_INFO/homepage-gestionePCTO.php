@@ -31,7 +31,6 @@
             <div class="name" id="greeting"><h2 style="font-family: Inter; font-size: 15px; color: black;"></h2></div>
             <ul>
                 <li><a href="">Home</a></li>
-                <li><a onclick="document.getElementById('sezionePrincipale').scrollIntoView({behavior: 'smooth'});">Account</a></li>
                 <li><a onclick="document.getElementById('sezionePrincipale').scrollIntoView({behavior: 'smooth'});">Accedi</a></li>
                 <li><a href="FAQ.html">FAQ</a></li>
             </ul>
