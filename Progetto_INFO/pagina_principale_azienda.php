@@ -39,7 +39,7 @@ if (isset($pi)) {
     if(isset($CF_TA) && isset($PI) && isset($nome) && isset($cognome) && isset($inq) && isset($comp) && isset($esp) && isset($email) && isset($tel)){
         if(!empty($CF_TA) && !empty($PI) && !empty($nome) && !empty($cognome) && !empty($comp) && !empty($esp) && !empty($email) && !empty($tel)){
             $insert = "INSERT INTO Tutor_aziendale (CF_TA, PI, nome, cognome, inquadramento, competenze, esperienze, email, telefono)
-            VALUES ('$CF_TA', '$PI', '$nome', 'cognome', 'inq', 'comp', 'esp', 'email', 'tel');";
+            VALUES ('$CF_TA', '$PI', '$nome', '$cognome', '$inq', '$comp', '$esp', '$email', '$tel');";
             $conn ->query($insert);
         }
     }
@@ -182,35 +182,37 @@ if (isset($pi)) {
         <?php
             // RECUPERO DEGLI STUDENTI ASSEGNATI
             $studenti_assegnati = [];
-            if(!empty($azienda['PI'])){
+            if (!empty($azienda['pi'])) {
                 $conn = new mysqli("localhost", "root", "", "GestioneFSL");
                 if (!$conn->connect_error) {
+                    $pi_safe = $conn->real_escape_string($azienda['pi']);
 
                     $query = "SELECT *
-                    FROM Studente
-                    WHERE CF_S IN (
-                        SELECT CF_S 
-                        FROM Partecipa 
-                        WHERE titolo IN (
-                            SELECT titolo 
-                            FROM Attivita
-                            WHERE PI = ".$azienda['PI'].";";
-                    $ris = $conn -> query($query);
+                            FROM Studente
+                            WHERE CF_S IN (
+                                SELECT CF_S 
+                                FROM Partecipa 
+                                WHERE titolo IN (
+                                    SELECT titolo 
+                                    FROM Attivita
+                                    WHERE PI = '$pi_safe'
+                                )
+                            )";
+                    $ris = $conn->query($query);
 
-                    if($ris && $ris->num_rows > 0){
-                        while($row = $ris->fetch_assoc()){
-                            // Nota le parentesi quadre [] per aggiungere elementi alla lista
+                    if ($ris && $ris->num_rows > 0) {
+                        while ($row = $ris->fetch_assoc()) {
                             $studenti_assegnati[] = [
-                                "CF_S"             => $row['CF_S'],
-                                "nome"             => $row['nome'],
-                                "cognome"          => $row['cognome'],
-                                "data_nascita"     => $row['data_nascita'],
-                                "classe"           => $row['classe'],
-                                "indirizzo_studi"  => $row['indirizzo_studi'],
-                                "telefono"         => $row['telefono'],
-                                "email"            => $row['email'],
-                                "competenze"       => $row['competenze'],
-                                "CF_TS"            => $row['CF_TS'],
+                                "CF_S"            => $row['CF_S'],
+                                "nome"            => $row['nome'],
+                                "cognome"         => $row['cognome'],
+                                "data_nascita"    => $row['data_nascita'],
+                                "classe"          => $row['classe'],
+                                "indirizzo_studi" => $row['indirizzo_studi'],
+                                "telefono"        => $row['telefono'],
+                                "email"           => $row['email'],
+                                "competenze"      => $row['competenze'],
+                                "CF_TS"           => $row['CF_TS'],
                             ];
                         }
                     }
@@ -221,12 +223,13 @@ if (isset($pi)) {
         <?php
             // RECUPERO TUTOR_A
             $tutor_A = [];
-            if(!empty($azienda['PI'])){
+            if(!empty($azienda['pi'])){
                 $conn = new mysqli("localhost", "root", "", "GestioneFSL");
                 if (!$conn->connect_error) {
 
-                    $query = "SELECT * FROM Tutor_aziendale WHERE PI = ".$azienda['pi'].";";
-                    $ris2 = $conn -> query($query);
+                    $pi_safe = $conn->real_escape_string($azienda['pi']);
+                    $query = "SELECT * FROM Tutor_aziendale WHERE PI = '$pi_safe'";
+                    $ris2 = $conn->query($query);
 
                     if($ris2 && $ris2->num_rows > 0){
                         while($row = $ris2->fetch_assoc()){
@@ -235,7 +238,7 @@ if (isset($pi)) {
                                 "CF_TA"             => $row['CF_TA'],
                                 "nome"          => $row['nome'],
                                 "cognome"          => $row['cognome'],
-                                "inquadramento"     => $row['data_nascita'],
+                                "inquadramento"     => $row['inquadramento'],
                                 "telefono"         => $row['telefono'],
                                 "email"            => $row['email'],
                             ];
