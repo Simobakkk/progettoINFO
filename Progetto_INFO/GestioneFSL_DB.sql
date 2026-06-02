@@ -34,13 +34,15 @@ CREATE TABLE Sede_legale (
 
 CREATE TABLE Tutor_aziendale (
     CF_TA VARCHAR (30) PRIMARY KEY,
+    PI VARCHAR(30),
     nome VARCHAR (50),
     cognome VARCHAR (50),
     inquadramento VARCHAR (50),
     competenze TEXT,
     esperienze TEXT,
     email VARCHAR (50),
-    telefono VARCHAR (15)
+    telefono VARCHAR (15),
+    FOREIGN KEY (PI) REFERENCES Azienda (PI)
 );
 
 CREATE TABLE Tutor_scolastico (
@@ -83,7 +85,8 @@ CREATE TABLE Attivita (
     FOREIGN KEY (CF_TA) REFERENCES Tutor_aziendale(CF_TA)
 );
 
-CREATE TABLE Partecipa (
+--associazione STUDENTE ATTIVITA' (da attività si risale ad azienda)
+CREATE TABLE Partecipa ( 
     CF_S VARCHAR (30),
     titolo VARCHAR (30),
     PRIMARY KEY (CF_S, titolo),

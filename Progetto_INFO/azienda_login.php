@@ -1,4 +1,5 @@
 <?php
+    session_start();
     if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         $pi = $_POST["pi"];
@@ -12,7 +13,6 @@
                 while($row = $ris ->fetch_assoc()){
                     if($pi == $row['User_id'] && $pw == $row['Password_cod']){
                         //accesso possibile a pagina successiva (elenco aziende + account azienda) tramite passaggio ID
-                        session_start();
                         $_SESSION["pi"] = $pi;
                         header("Location: pagina_principale_azienda.php");
                         exit;
@@ -49,7 +49,7 @@
                     Password 
                 </label>
             </div>
-            <input type="password" id="key" name="key" placeholder="Password" required>
+            <input type="password" id="key" name="password" placeholder="Password" required>
             <input type="submit">
         </form>
         <h3>

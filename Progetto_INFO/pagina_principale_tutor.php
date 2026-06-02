@@ -33,7 +33,7 @@ if (isset($pi)) {
     <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
     <title>Il tuo account - Tutor</title>
 </head>
-<body>
+<body style="background-color: white;">
     <nav>
         <div class="logo"><img src="Immagini/logoFSL.png" style="height: 90px; width: 90px;"></div>
         <div class="name" id="greeting"><h2 style="font-family: Inter; font-size: 15px; color: black;"></h2></div>
@@ -41,7 +41,7 @@ if (isset($pi)) {
             <li><a href="homepage-gestionePCTO.php">Home</a></li>
             <li><a><?php 
                 if(!empty($tutor)) {
-                    echo htmlspecialchars($tutor['nome'] . ' - ' . $tutor['cognome']);
+                    echo htmlspecialchars($tutor['nome'] . ' ' . $tutor['cognome']);
                 } else {
                     echo "Utente non autenticato";
                 }

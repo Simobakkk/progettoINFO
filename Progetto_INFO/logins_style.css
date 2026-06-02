@@ -19,7 +19,7 @@ h3{
 }
 a{
     text-decoration: none;
-    color:rgb(68, 184, 85)
+    color:rgb(68, 184, 85);
 }
 .container{
     display: flex;

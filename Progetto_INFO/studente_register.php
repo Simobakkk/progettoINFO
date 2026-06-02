@@ -15,7 +15,7 @@
 
         if(isset($pi) && isset($name) && isset($surname) && isset($date) && isset($class) && isset($indirizzo) && isset($telefono) && isset($email) && isset($competenze)){
             $conn = new mysqli("localhost", "root", "", "gestioneFSL");
-            $insertStudente = "INSERT INTO Studente (CF_S, nome, cognome, data_nascita, classe, indirizzo_studi, telefono, email, competenze, ) 
+            $insertStudente = "INSERT INTO Studente (CF_S, nome, cognome, data_nascita, classe, indirizzo_studi, telefono, email, competenze, CF_TS) 
             VALUES ('$pi', '$name', '$surname', '$date', '$class', '$indirizzo', '$tel', '$email', '$competenze', 'null');";
             $conn -> query($insertAzienda);
 

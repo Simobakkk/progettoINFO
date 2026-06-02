@@ -49,7 +49,7 @@
                     Password 
                 </label>
             </div>
-            <input type="password" id="key" name="key" placeholder="Password" required>
+            <input type="password" id="key" name="password" placeholder="Password" required>
             <input type="submit">
         </form>
         <h3>

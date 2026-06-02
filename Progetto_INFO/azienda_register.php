@@ -1,4 +1,5 @@
 <?php
+    session_start();
     if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         $pi = $_POST["pi"];
@@ -21,7 +22,6 @@
             VALUES ('$pi', 'Azienda', '$token')";
             $conn -> query($insertChiavi);
 
-            session_start();
             $_SESSION["pi"] = $pi;
             header("Location: pagina_principale_azienda.php");
             exit;
