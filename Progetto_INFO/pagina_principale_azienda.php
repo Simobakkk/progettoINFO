@@ -298,7 +298,7 @@ if (isset($pi)) {
         </div>
 
         <div style="margin-top: 30px; overflow-x: auto;">
-            <h3 style="color: #333; margin-bottom: 15px;">Studenti Associati al tuo Profilo</h3>
+            <h3 style="color: #333; margin-bottom: 15px;">Tutor associati alla tua azienda</h3>
             
             <?php if (!empty($tutor_A)): ?>
                 <table style="width: 100%; border-collapse: collapse; background: white; min-width: 600px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 10px;">
@@ -320,8 +320,8 @@ if (isset($pi)) {
                                     <strong><?php echo htmlspecialchars($tutor['inquadramento']); ?></strong><br>
                                 </td>
                                 <td style="padding: 12px; border: 1px solid #ddd; font-size: 14px;">
-                                    <?php echo htmlspecialchars($studente['telefono']); ?><br>
-                                    <?php echo htmlspecialchars($studente['email']); ?>
+                                    <?php echo htmlspecialchars($tutor['telefono']); ?><br>
+                                    <?php echo htmlspecialchars($tutor['email']); ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
