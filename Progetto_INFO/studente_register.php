@@ -1,3 +1,37 @@
+<?php
+    // ALLO STUDENTE VIENE ASSEGNATO UN TUTOR SCOLASTICO DAL REFERENTE
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+        $pi = $_POST["pi"];
+        $name = $_POST["name"];
+        $surname = $_POST["surname"];
+        $date = $_POST["date"];
+        $class = $_POST["class"];
+        $indirizzo = $_POST["indirizzo"];
+        $tel = $_POST["tel"];
+        $email = $_POST["email"];
+        $competenze = $_POST["comp"];
+        //la chiave secondaria viene posta a null
+
+        if(isset($pi) && isset($name) && isset($surname) && isset($date) && isset($class) && isset($indirizzo) && isset($telefono) && isset($email) && isset($competenze)){
+            $conn = new mysqli("localhost", "root", "", "gestioneFSL");
+            $insertStudente = "INSERT INTO Studente (CF_S, nome, cognome, data_nascita, classe, indirizzo_studi, telefono, email, competenze, ) 
+            VALUES ('$pi', '$name', '$surname', '$date', '$class', '$indirizzo', '$tel', '$email', '$competenze', 'null');";
+            $conn -> query($insertAzienda);
+
+            //generazione token (chiave)
+            $token = bin2hex(random_bytes(4));
+            $insertChiavi = "INSERT INTO Chiavi (User_id, Tipo, Password_cod) 
+            VALUES ('$pi', 'Studente', '$token')";
+            $conn -> query($insertChiavi);
+
+            session_start();
+            $_SESSION["pi"] = $pi;
+            header("Location: pagina_principale_studente.php");
+            exit;
+        }
+    }
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -83,39 +117,5 @@
             <input type="submit">
         </form>
     </div>
-    <?php
-    // ALLO STUDENTE VIENE ASSEGNATO UN TUTOR SCOLASTICO DAL REFERENTE
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-
-        $pi = $_POST["pi"];
-        $name = $_POST["name"];
-        $surname = $_POST["surname"];
-        $date = $_POST["date"];
-        $class = $_POST["class"];
-        $indirizzo = $_POST["indirizzo"];
-        $tel = $_POST["tel"];
-        $email = $_POST["email"];
-        $competenze = $_POST["comp"];
-        //la chiave secondaria viene posta a null
-
-        if(isset($pi) && isset($name) && isset($surname) && isset($date) && isset($class) && isset($indirizzo) && isset($telefono) && isset($email) && isset($competenze)){
-            $conn = new mysqli("localhost", "root", "", "gestioneFSL");
-            $insertStudente = "INSERT INTO Studente (CF_S, nome, cognome, data_nascita, classe, indirizzo_studi, telefono, email, competenze, ) 
-            VALUES ('$pi', '$name', '$surname', '$date', '$class', '$indirizzo', '$tel', '$email', '$competenze', 'null');";
-            $conn -> query($insertAzienda);
-
-            //generazione token (chiave)
-            $token = bin2hex(random_bytes(4));
-            $insertChiavi = "INSERT INTO Chiavi (User_id, Tipo, Password_cod) 
-            VALUES ('$pi', 'Studente', '$token')";
-            $conn -> query($insertChiavi);
-
-            session_start();
-            $_SESSION["pi"] = $pi;
-            header("Location: pagina_principale_studente.php");
-            exit;
-        }
-    }
-    ?>
 </body>
 </html>

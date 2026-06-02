@@ -1,3 +1,29 @@
+<?php
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        
+        $pi = $_POST["pi"];
+        $pw = $_POST["password"];
+
+        if(isset($pi) && isset($pw)){
+            $conn = new mysqli("localhost", "root", "", "GestioneFSL");
+            $querySQL = "SELECT * FROM Chiavi WHERE Tipo = 'Tutor';";
+            $ris = $conn ->query($querySQL);
+            if($ris -> num_rows > 0){
+                while($row = $ris ->fetch_assoc()){
+                    if($pi == $row['User_id'] && $pw == $row['Password_cod']){
+                        //accesso possibile a pagina successiva (elenco tutor)
+                        session_start();
+                        $_SESSION["pi"] = $pi;
+                        header("Location: pagina_principale_tutor.php");
+                        exit;
+                    }else{
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,31 +56,5 @@
             Non hai un account?<a href="tutor_register.php"> Registrati</a>
         </h3>
     </div>
-    <?php
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-        
-        $pi = $_POST["pi"];
-        $pw = $_POST["password"];
-
-        if(isset($pi) && isset($pw)){
-            $conn = new mysqli("localhost", "root", "", "GestioneFSL");
-            $querySQL = "SELECT * FROM Chiavi WHERE Tipo = 'Tutor';";
-            $ris = $conn ->query($querySQL);
-            if($ris -> num_rows > 0){
-                while($row = $ris ->fetch_assoc()){
-                    if($pi == $row['User_id'] && $pw == $row['Password_cod']){
-                        //accesso possibile a pagina successiva (elenco tutor)
-                        session_start();
-                        $_SESSION["pi"] = $pi;
-                        header("Location: pagina_principale_tutor.php");
-                        exit;
-                    }else{
-                        continue;
-                    }
-                }
-            }
-        }
-    }
-    ?>
 </body>
 </html>

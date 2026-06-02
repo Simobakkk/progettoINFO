@@ -1,3 +1,33 @@
+<?php
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+        $pi = $_POST["pi"];
+        $name = $_POST["name"];
+        $resp = $_POST["resp"];
+        $email = $_POST["email"];
+        $settore = $_POST["settore"];
+        $atc = $_POST["atc"];
+        $tel = $_POST["tel"];
+
+        if(isset($pi) && isset($name) && isset($resp) && isset($email) && isset($settore) && isset($atc) && isset($tel)){
+            $conn = new mysqli("localhost", "root", "", "gestioneFSL");
+            $insertAzienda = "INSERT INTO Azienda (PI, ragione_sociale, responsabile, email, settore, codice_ATECO, telefono) 
+            VALUES ('$pi', '$name', '$resp', '$email', '$settore', '$atc', '$tel');";
+            $conn -> query($insertAzienda);
+
+            //generazione token (chiave)
+            $token = bin2hex(random_bytes(4));
+            $insertChiavi = "INSERT INTO Chiavi (User_id, Tipo, Password_cod) 
+            VALUES ('$pi', 'Azienda', '$token')";
+            $conn -> query($insertChiavi);
+
+            session_start();
+            $_SESSION["pi"] = $pi;
+            header("Location: pagina_principale_azienda.php");
+            exit;
+        }
+    }
+    ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,35 +98,5 @@
             <input type="submit">
         </form>
     </div>
-    <?php
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-
-        $pi = $_POST["pi"];
-        $name = $_POST["name"];
-        $resp = $_POST["resp"];
-        $email = $_POST["email"];
-        $settore = $_POST["settore"];
-        $atc = $_POST["atc"];
-        $tel = $_POST["tel"];
-
-        if(isset($pi) && isset($name) && isset($resp) && isset($email) && isset($settore) && isset($atc) && isset($tel)){
-            $conn = new mysqli("localhost", "root", "", "gestioneFSL");
-            $insertAzienda = "INSERT INTO Azienda (PI, ragione_sociale, responsabile, email, settore, codice_ATECO, telefono) 
-            VALUES ('$pi', '$name', '$resp', '$email', '$settore', '$atc', '$tel');";
-            $conn -> query($insertAzienda);
-
-            //generazione token (chiave)
-            $token = bin2hex(random_bytes(4));
-            $insertChiavi = "INSERT INTO Chiavi (User_id, Tipo, Password_cod) 
-            VALUES ('$pi', 'Azienda', '$token')";
-            $conn -> query($insertChiavi);
-
-            session_start();
-            $_SESSION["pi"] = $pi;
-            header("Location: pagina_principale_azienda.php");
-            exit;
-        }
-    }
-    ?>
 </body>
 </html>
