@@ -1,4 +1,5 @@
 <?php
+    session_start();
     if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         $id = $_POST["Ref_ID"];
@@ -11,7 +12,6 @@
             if($ris -> num_rows > 0){
                 while($row = $ris ->fetch_assoc()){
                     if($id == $row['Ref_ID'] && $pw == $row['password']){
-                        session_start();
                         header("Location: elencoTotale_scuola.php");
                         exit;
                     }else{
@@ -35,7 +35,7 @@
         <h1>
             Accedi
         </h1>
-        <form action="azienda_login.php" method="POST">
+        <form action="referente_login.php" method="POST">
             <div class="label-wrapper">
                 <label for="Ref_ID">
                     Codice fiscale

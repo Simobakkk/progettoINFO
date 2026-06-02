@@ -37,7 +37,7 @@
         <h1>
             Accedi
         </h1>
-        <form action="azienda_login.php" method="POST">
+        <form action="tutor_login.php" method="POST">
             <div class="label-wrapper">
                 <label for="pi">
                     Codice fiscale
