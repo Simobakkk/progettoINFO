@@ -175,7 +175,7 @@
                     <a href="#">GitHub</a>
                 </div>
             </div>
-            <p class="copy" style="font-family: calibri;">©Copyright easyFSL s.r.l management company 2025</p>
+            <p class="copy" style="font-family: calibri;">©Copyright easyFSL s.r.l management company 2026</p>
         </footer>
     </body>
     <script src="script.js"></script>
