@@ -13,11 +13,11 @@
         $competenze = $_POST["comp"];
         //la chiave secondaria viene posta a null
 
-        if(isset($pi) && isset($name) && isset($surname) && isset($date) && isset($class) && isset($indirizzo) && isset($telefono) && isset($email) && isset($competenze)){
+        if(isset($pi) && isset($name) && isset($surname) && isset($date) && isset($class) && isset($indirizzo) && isset($tel) && isset($email) && isset($competenze)){
             $conn = new mysqli("localhost", "root", "", "gestioneFSL");
             $insertStudente = "INSERT INTO Studente (CF_S, nome, cognome, data_nascita, classe, indirizzo_studi, telefono, email, competenze, CF_TS) 
-            VALUES ('$pi', '$name', '$surname', '$date', '$class', '$indirizzo', '$tel', '$email', '$competenze', 'null');";
-            $conn -> query($insertAzienda);
+            VALUES ('$pi', '$name', '$surname', '$date', '$class', '$indirizzo', '$tel', '$email', '$competenze', NULL);";
+            $conn -> query($insertStudente);
 
             //generazione token (chiave)
             $token = bin2hex(random_bytes(4));
@@ -40,12 +40,12 @@
     <title>Registrati come studente</title>
     <link rel="stylesheet" href="logins_style.css?v=<?php echo time(); ?>">
 </head>
-<body>
+<body style="height: 150vh;">
     <div class="container_register">
         <h1>
             Registrati
         </h1>
-        <form action="azienda_register.php" method="POST">
+        <form action="studente_register.php" method="POST">
             <div class="label-wrapper">
                 <label for="pi">
                     Codice fiscale
@@ -58,7 +58,7 @@
                     Nome
                 </label>
             </div>
-            <input type="text" id="pi" name="name" placeholder="Il tuo nome" required>
+            <input type="text" id="name" name="name" placeholder="Il tuo nome" required>
 
             <div class="label-wrapper">
                 <label for="resp">

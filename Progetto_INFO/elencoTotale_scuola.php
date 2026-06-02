@@ -1,170 +1,380 @@
+<?php
+$conn = new mysqli("localhost", "root", "", "GestioneFSL");
+if ($conn->connect_error) {
+    die("Errore connessione: " . $conn->connect_error);
+}
+
+$scuola = [
+    "nome" => "ITT S. Cannizzaro",
+    "indirizzo" => "Via R. Sanzio 2",
+    "citta" => "Rho (MI), Lombardia"
+];
+
+$aziende = [];
+$res = $conn->query("SELECT * FROM Azienda");
+while ($row = $res->fetch_assoc()) {
+    $aziende[] = $row;
+}
+
+
+$studenti = [];
+$res = $conn->query("SELECT * FROM Studente");
+while ($row = $res->fetch_assoc()) {
+    $studenti[] = $row;
+}
+
+
+$tutor = [];
+$res = $conn->query("SELECT * FROM Tutor_scolastico");
+while ($row = $res->fetch_assoc()) {
+    $tutor[] = $row;
+}
+
+$commenti = [];
+$res = $conn->query("SELECT * FROM Commento");
+while ($row = $res->fetch_assoc()) {
+    $commenti[] = $row;
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
-    <title>Il tuo account - Tutor</title>
-</head>
-<body style="background-color: white;">
-    <nav>
-        <div class="logo"><img src="Immagini/logoFSL.png" style="height: 90px; width: 90px;"></div>
-        <div class="name" id="greeting"><h2 style="font-family: Inter; font-size: 15px; color: black;"></h2></div>
-        <ul>
-            <li><a href="homepage-gestionePCTO.php">Home</a></li>
-            <li><a><?php 
-                if(!empty($tutor)) {
-                    echo htmlspecialchars($tutor['nome'] . ' ' . $tutor['cognome']);
-                } else {
-                    echo "Utente non autenticato";
-                }
-                ?></a></li>
-            <li><a href="FAQ.html">FAQ</a></li>
-        </ul>
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Scuola</title>
 
-    <main style="padding: 40px; font-family: Inter, sans-serif; max-width: 1000px; margin: 0 auto;">
-        <?php if (!empty($tutor)): ?>
-            <div class="profile-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px;">
-                <h2 style="margin-top: 0; color: #333;">Dati del Profilo</h2>
-                <hr style="border: 0; height: 1px; background: #eee; margin-bottom: 20px;">
-                <p><strong>Nome:</strong> <?php echo htmlspecialchars($tutor['nome']); ?></p>
-                <p><strong>Cognome:</strong> <?php echo htmlspecialchars($tutor['cognome']); ?></p>
-                <p><strong>Codice Fiscale:</strong> <?php echo htmlspecialchars($tutor['CF_TS']); ?></p>
-                <p><strong>Email:</strong> <?php echo htmlspecialchars($tutor['email']); ?></p>
-            </div>
-        <?php else: ?>
-            <p style="color: red; text-align: center;">Nessun dato trovato. Effettua il login.</p>
-        <?php endif; ?>
+<style>
+body {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    background: #ffffff;
+}
 
-        <?php
-            // RECUPERO DEGLI STUDENTI ASSEGNATI
-            $studenti_assegnati = [];
-            if(!empty($tutor['CF_TS'])){
-                $conn = new mysqli("localhost", "root", "", "GestioneFSL");
-                if (!$conn->connect_error) {
-                    $cf_tutor_safe = $conn->real_escape_string($tutor['CF_TS']);
-                    $querySQL = "SELECT * FROM Studente WHERE CF_TS = '$cf_tutor_safe'";
-                    $ris = $conn->query($querySQL);
-                    
-                    if($ris && $ris->num_rows > 0){
-                        while($row = $ris->fetch_assoc()){
-                            // Nota le parentesi quadre [] per aggiungere elementi alla lista
-                            $studenti_assegnati[] = [
-                                "CF_S"             => $row['CF_S'],
-                                "nome"             => $row['nome'],
-                                "cognome"          => $row['cognome'],
-                                "data_nascita"     => $row['data_nascita'],
-                                "classe"           => $row['classe'],
-                                "indirizzo_studi"  => $row['indirizzo_studi'],
-                                "telefono"         => $row['telefono'],
-                                "email"            => $row['email'],
-                                "competenze"       => $row['competenze'],
-                                "CF_TS"            => $row['CF_TS']
-                            ];
-                        }
-                    }
-                    $conn->close();
-                }
-            }
-        ?>
+/* CARD STYLE */
+.card {
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
 
-        <div style="margin-top: 20px; text-align: center;">
-            <button id="btnMostraStudenti" onclick="toggleStudenti()" style="padding: 12px 24px; font-size: 16px; background-color: rgb(68, 184, 85); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
-                Visualizza Elenco Studenti
-            </button>
-        </div>
+/* TITOLI */
+h2 {
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
 
-        <div id="tabellaStudentiContainer" style="display: none; margin-top: 30px; overflow-x: auto;">
-            <h3 style="color: #333; margin-bottom: 15px;">Studenti Associati al tuo Profilo</h3>
-            
-            <?php if (!empty($studenti_assegnati)): ?>
-                <table style="width: 100%; border-collapse: collapse; background: white; min-width: 600px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                    <thead>
-                        <tr style="background-color: #f2f2f2; text-align: left; border-bottom: 2px solid #ddd;">
-                            <th style="padding: 12px; border: 1px solid #ddd;">Nome / Cognome</th>
-                            <th style="padding: 12px; border: 1px solid #ddd;">CF Studente</th>
-                            <th style="padding: 12px; border: 1px solid #ddd;">Classe & Indirizzo</th>
-                            <th style="padding: 12px; border: 1px solid #ddd;">Contatti</th>
-                            <th style="padding: 12px; border: 1px solid #ddd;">Competenze</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($studenti_assegnati as $studente): ?>
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 12px; border: 1px solid #ddd;">
-                                    <strong><?php echo htmlspecialchars($studente['nome'] . " " . $studente['cognome']); ?></strong><br>
-                                    <small style="color:#666;">Nato il: <?php echo htmlspecialchars($studente['data_nascita']); ?></small>
-                                </td>
-                                <td style="padding: 12px; border: 1px solid #ddd; font-family: monospace; font-size: 13px;">
-                                    <?php echo htmlspecialchars($studente['CF_S']); ?>
-                                </td>
-                                <td style="padding: 12px; border: 1px solid #ddd;">
-                                    <?php echo htmlspecialchars($studente['classe'] . " - " . $studente['indirizzo_studi']); ?>
-                                </td>
-                                <td style="padding: 12px; border: 1px solid #ddd; font-size: 14px;">
-                                    <?php echo htmlspecialchars($studente['telefono']); ?><br>
-                                    <?php echo htmlspecialchars($studente['email']); ?>
-                                </td>
-                                <td style="padding: 12px; border: 1px solid #ddd; font-size: 14px; max-width: 200px; word-wrap: break-word;">
-                                    <?php echo nl2br(htmlspecialchars($studente['competenze'])); ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <p style="color: #666; font-style: italic; text-align: center; background: #f9f9f9; padding: 20px; border-radius: 5px;">
-                    Al momento non hai nessuno studente assegnato.
-                </p>
-            <?php endif; ?>
-        </div>
-    </main>
+/* LISTE */
+.item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
 
-    <script>
-    function toggleStudenti() {
-        var container = document.getElementById("tabellaStudentiContainer");
-        var btn = document.getElementById("btnMostraStudenti");
-        
-        if (container.style.display === "none") {
-            container.style.display = "block";
-            btn.textContent = "Nascondi Elenco Studenti";
-            btn.style.backgroundColor = "#6c757d";
-        } else {
-            container.style.display = "none";
-            btn.textContent = "Visualizza Elenco Studenti";
-            btn.style.backgroundColor = "rgb(68, 184, 85)";
-        }
+.item:last-child {
+    border-bottom: none;
+}
+
+/* NAVBAR */
+nav{
+    position: relative;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    height: 90px;
+    background-color: white;
+    overflow: visible;
+    padding: 0 60px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+nav ul{
+    display: flex;          
+    gap: 50px; 
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    gap: 50px;
+}
+nav a{
+    display: inline-block;
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: calibri;
+    font-size: 18px;
+    padding: 10px, 15px;
+    border-radius: 10px;
+    transition: transform 0.2s;
+    text-align: center;
+    padding: 5px 10px;
+}
+nav a:hover{
+    transform: scale(1.1);
+    background-color: rgb(68, 184, 85);
+    color: white;
+    font-weight: bold;
+}
+
+nav li{
+    position: relative;
+}
+
+/*per adattamento mobile*/
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 26px;
+  height: 3px;
+  background: black;
+  border-radius: 3px;
+}
+
+@media (max-width: 950px) {
+  nav ul {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  nav ul.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    background: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+}
+
+
+.nav ul.active {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background: #111;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  gap: 1rem;
+}
+
+/* FOOTER */
+.footer .col h3 {
+    font-family: Inter;
+    color: white;
+    margin-bottom: 10px;
+}
+.footer a {
+    font-family: Inter;
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 4px 0;
+}
+@media (max-width: 900px){
+    .footer .col h3{
+        text-align: center;
     }
-    </script>
+    .footer a{
+        text-align: center;
+    }
+}
+.footer a:hover {
+    color: green;
+}
 
-    <footer class="footer">
-        <div class="container">
-            <div class="col">
-                <h3>Azienda</h3>
-                <a href="#sezionePrincipale.html">Prodotti</a>
-                <a href="FAQ.html">FAQ</a>
-                <a href="#">Lavora con noi</a>
-            </div>
-            <div class="col">
-                <h3>Supporto</h3>
-                <a href="#">FAQ</a>
-                <a href="#">Assistenza</a>
-                <a href="#">Privacy</a>
-            </div>
-            <div class="col">
-                <h3>Social</h3>
-                <a href="#">Instagram</a>
-                <a href="#">LinkedIn</a>
-                <a href="#">GitHub</a>
-            </div>
+.footer {
+    background: rgb(68, 184, 85);
+    color: white;
+    padding: 40px 0;
+    margin-top: 60px;
+}
+.footer .container {
+    font-family: Inter;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+.search-box {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-family: Inter, sans-serif;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+<script>
+function filter(sezione, valore) {
+    valore = valore.toLowerCase().trim();
+
+    let items = document.querySelectorAll("." + sezione + "-card");
+
+    items.forEach(el => {
+        let text = el.innerText.toLowerCase();
+
+        if (text.includes(valore)) {
+            el.style.display = "block";
+        } else {
+            el.style.display = "none";
+        }
+    });
+}
+</script>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">
+        <img src="Immagini/logoFSL.png" style="height: 70px;">
+    </div>
+
+    <ul>
+        <li><a href="homepage-gestionePCTO.php">Home</a></li>
+        <li><a href="#">Scuola</a></li>
+        <li><a href="FAQ.html">FAQ</a></li>
+    </ul>
+</nav>
+
+<main>
+
+<div class="card">
+    <h2>Informazioni Scuola</h2>
+    <p><b>Nome:</b> <?= $scuola['nome'] ?></p>
+    <p><b>Indirizzo:</b> <?= $scuola['indirizzo'] ?></p>
+    <p><b>Città:</b> <?= $scuola['citta'] ?></p>
+</div>
+
+<div class="card">
+    <h2>Aziende</h2>
+
+    <input type="text"
+       class="search-box"
+       placeholder="Cerca azienda..."
+       onkeyup="filter('aziende', this.value)"
+       onkeydown="if(event.key==='Enter'){ event.preventDefault(); filter('aziende', this.value); }">
+
+    <?php foreach ($aziende as $a): ?>
+        <div class="item">
+            <b><?= $a['ragione_sociale'] ?></b><br>
+            Responsabile: <?= $a['responsabile'] ?><br>
+            Email: <?= $a['email'] ?><br>
+            Settore: <?= $a['settore'] ?>
         </div>
-        <center><p class="copy" style="font-family: calibri;">©Copyright easyFSL s.r.l management company 2026</p></center>
-    </footer>
+    <?php endforeach; ?>
+</div>
+
+<div class="card">
+    <h2>Studenti</h2>
+
+    <input type="text"
+       class="search-box"
+       placeholder="Cerca studente..."
+       onkeyup="filter('studenti', this.value)"
+       onkeydown="if(event.key==='Enter'){ event.preventDefault(); filter('studenti', this.value); }">
+
+    <?php foreach ($studenti as $s): ?>
+        <div class="item">
+            <b><?= $s['nome'] ?> <?= $s['cognome'] ?></b><br>
+            Classe: <?= $s['classe'] ?><br>
+            Email: <?= $s['email'] ?><br>
+            Competenze: <?= $s['competenze'] ?>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+
+<div class="card">
+    <h2>Tutor scolastici</h2>
+
+    <input type="text"
+       class="search-box"
+       placeholder="Cerca tutor..."
+       onkeyup="filter('tutor', this.value)"
+       onkeydown="if(event.key==='Enter'){ event.preventDefault(); filter('tutor', this.value); }">
+
+    <?php foreach ($tutor as $t): ?>
+        <div class="item">
+            <b><?= $t['nome'] ?> <?= $t['cognome'] ?></b><br>
+            Email: <?= $t['email'] ?>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+
+<div class="card">
+    <h2>Commenti</h2>
+
+    <input type="text"
+       class="search-box"
+       placeholder="Cerca commenti..."
+       onkeyup="filter('commenti', this.value)"
+       onkeydown="if(event.key==='Enter'){ event.preventDefault(); filter('commenti', this.value); }">
+
+    <?php foreach ($commenti as $c): ?>
+        <div class="item">
+            <b>Studente:</b> <?= $c['CF_S'] ?><br>
+            <?= $c['testo'] ?>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="col">
+            <h3>Azienda</h3>
+            <a href="#">Prodotti</a>
+            <a href="FAQ.html">FAQ</a>
+        </div>
+
+        <div class="col">
+            <h3>Supporto</h3>
+            <a href="#">Assistenza</a>
+            <a href="#">Privacy</a>
+        </div>
+
+        <div class="col">
+            <h3>Social</h3>
+            <a href="#">Instagram</a>
+            <a href="#">LinkedIn</a>
+        </div>
+    </div>
+
+    <center>
+        <p>© Copyright easyFSL s.r.l management company 2026</p>
+    </center>
+</footer>
+
 </body>
 </html>
