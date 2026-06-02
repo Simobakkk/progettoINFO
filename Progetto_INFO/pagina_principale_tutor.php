@@ -70,7 +70,7 @@ if (isset($pi)) {
         <?php endif; ?>
 
         <?php
-            // RECUPERO DEGLI STUDENTI ASSEGNATI
+            // studenti assegnati
             $studenti_assegnati = [];
             if(!empty($tutor['CF_TS'])){
                 $conn = new mysqli("localhost", "root", "", "GestioneFSL");
