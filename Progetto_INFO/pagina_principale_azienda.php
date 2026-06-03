@@ -409,7 +409,7 @@ if (isset($pi)) {
                             <th style="padding: 12px; border: 1px solid #ddd;">titolo</th>
                             <th style="padding: 12px; border: 1px solid #ddd;">periodo_i</th>
                             <th style="padding: 12px; border: 1px solid #ddd;">periodo_f</th>
-                            <th style="padding: 12px; border: 1px solid #ddd;">att_oggett</th>
+                            <th style="padding: 12px; border: 1px solid #ddd;">att_oggetto</th>
                             <th style="padding: 12px; border: 1px solid #ddd;">max_studenti</th>
                         </tr>
                     </thead>
@@ -417,18 +417,22 @@ if (isset($pi)) {
                         <?php foreach ($attivita as $a): ?>
                             <tr style="border-bottom: 1px solid #ddd;">
                                 <td style="padding: 12px; border: 1px solid #ddd;">
-                                    <strong><?php echo htmlspecialchars($a['titolo']); ?></strong><br>
-                                    <small style="color:#666;">Settore: <?php echo htmlspecialchars($a['max-studenti']); ?></small>
+                                    <strong><?php echo htmlspecialchars($a['titolo']); ?></strong>
+                                    <!-- rimuovi da qui il <small> con max-studenti -->
                                 </td>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($a['periodo_i']); ?></strong><br>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <?php echo htmlspecialchars($a['periodo_i']); ?>
                                 </td>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($a['periodo_f']); ?></strong><br>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <?php echo htmlspecialchars($a['periodo_f']); ?>
                                 </td>
-                                <td style="padding: 12px; border: 1px solid #ddd; font-size: 14px;">
+                                <td style="padding: 12px; border: 1px solid #ddd;">
                                     <?php echo htmlspecialchars($a['att_oggetto']); ?><br>
                                     <?php echo htmlspecialchars($a['descrizione']); ?>
+                                </td>
+                                <!-- NUOVA CELLA per max_studenti -->
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <?php echo htmlspecialchars($a['max-studenti']); ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
