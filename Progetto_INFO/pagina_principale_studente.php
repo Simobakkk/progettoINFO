@@ -6,7 +6,7 @@ $pi = $_SESSION["pi"] ?? null;
 $studente = [];
 $attivita = [];
 $presente = false;
-$azienda = null;
+$azienda = [];
 
 $conn = new mysqli("localhost", "root", "", "GestioneFSL");
 if ($conn->connect_error) {
@@ -146,7 +146,7 @@ $conn->close();
 <!-- PROFILO -->
 <?php if (!empty($studente)): ?>
 <div class="profile-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px;">
-    <h2>Dati del Profilo</h2>
+    <h2 style="color: black;">Dati del Profilo</h2>
 
     <p><b>Nome:</b> <?= htmlspecialchars($studente['nome']) ?></p>
     <p><b>Cognome:</b> <?= htmlspecialchars($studente['cognome']) ?></p>
@@ -164,7 +164,7 @@ $conn->close();
 <?php if ($presente): ?>
 
 <div class="profile-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-    <h2>La tua azienda</h2>
+    <h2 style="color: black;">La tua azienda</h2>
 
     <p><b>Ragione sociale:</b> <?= htmlspecialchars($azienda['ragione_sociale'] ?? '') ?></p>
     <p><b>Responsabile:</b> <?= htmlspecialchars($azienda['responsabile'] ?? '') ?></p>
@@ -207,39 +207,33 @@ $conn->close();
 
 <?php foreach ($attivita as $a): ?>
 
-    <!-- TITOLO ATTIVITÀ -->
-    <h2 style="font-size: 1.4rem; font-weight: 600; color: #1a1a1a; margin-bottom: 12px;">
-        <?php echo $a['titolo']; ?>
-    </h2>
+    <div style="width: 100%; max-width: 600px; margin: 20px auto; padding: 20px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-family: system-ui, sans-serif;">
 
-    <!-- DESCRIZIONE -->
-    <p style="font-size: 0.95rem; color: #555; line-height: 1.5; margin-bottom: 14px;">
-        <?php echo $a['descrizione']; ?>
-    </p>
+        <h2 style="font-size: 1.4rem; font-weight: 600; color: #1a1a1a; margin-bottom: 12px;">
+            <?= htmlspecialchars($a['titolo']) ?>
+        </h2>
 
-    <!-- INFO ATTIVITÀ -->
-    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; color: #444; margin-bottom: 16px;">
+        <p style="font-size: 0.95rem; color: #555; line-height: 1.5; margin-bottom: 14px;">
+            <?= htmlspecialchars($a['descrizione']) ?>
+        </p>
 
-        <span><strong>Periodo:</strong> <?php echo $a['periodo_i']; ?> → <?php echo $a['periodo_f']; ?></span>
-        <span><strong>Durata:</strong> <?php echo $a['periodo']; ?> giorni</span>
-        <span><strong>Orario:</strong> <?php echo $a['orario_i']; ?> - <?php echo $a['orario_f']; ?></span>
-        <span><strong>Oggetto attività:</strong> <?php echo $a['att_oggetto']; ?></span>
-        <span><strong>Max studenti:</strong> <?php echo $a['max_studenti']; ?></span>
-        <span><strong>Competenze richieste:</strong> <?php echo $a['competenze_ric']; ?></span>
-        <span><strong>Ambito:</strong> <?php echo $a['ambito']; ?></span>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; color: #444; margin-bottom: 16px;">
+            <span><strong>Periodo:</strong> <?= htmlspecialchars($a['periodo_i']) ?> → <?= htmlspecialchars($a['periodo_f']) ?></span>
+            <span><strong>Durata:</strong> <?= htmlspecialchars($a['periodo']) ?> giorni</span>
+            <span><strong>Orario:</strong> <?= htmlspecialchars($a['orario_i']) ?> - <?= htmlspecialchars($a['orario_f']) ?></span>
+            <span><strong>Oggetto attività:</strong> <?= htmlspecialchars($a['att_oggetto']) ?></span>
+            <span><strong>Max studenti:</strong> <?= htmlspecialchars($a['max_studenti']) ?></span>
+            <span><strong>Competenze richieste:</strong> <?= htmlspecialchars($a['competenze_ric']) ?></span>
+            <span><strong>Ambito:</strong> <?= htmlspecialchars($a['ambito']) ?></span>
+        </div>
 
-    </div>
+        <form method="POST" action=""> <input type="hidden" name="titolo" value="<?= htmlspecialchars($a['titolo']) ?>">
+            <button type="submit" style="padding: 10px 18px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                Scegli
+            </button>
+        </form>
 
-    <!-- PULSANTE SCEGLI -->
-    <form method="POST">
-        <input type="hidden" name="titolo" value="<?php echo $a['titolo']; ?>">
-        <button type="submit"
-            style="padding: 10px 18px; background: #3b82f6; color: white; border: none; border-radius: 8px;">
-            Scegli
-        </button>
-    </form>
-
-<?php endforeach; ?>
+    </div> <?php endforeach; ?>
 
 </div>
 

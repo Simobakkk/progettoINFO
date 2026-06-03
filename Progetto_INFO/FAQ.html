@@ -92,19 +92,21 @@
             line-height: 1.5;
         }
 
-        /* SIDE NOTE */
-        .note {
-            margin-top: 30px;
-            padding: 16px;
-            background: #eef4ff;
-            border: 1px solid #d0ddff;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            color: #2c3e70;
+        .invisible-btn-wrapper {
+            position: absolute;
+            left: 0;        /* allinea al bordo sinistro del viewport */
+            top: 0;         /* allinea al bordo superiore del viewport */
+            /* oppure top: auto; bottom: 0; per posizionarlo in basso a sinistra */
         }
 
-        .note strong {
-            color: #1e3a8a;
+        .invisible-btn {
+            width: 200px;
+            height: 50px;
+            opacity: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
         }
 
     </style>
@@ -168,6 +170,14 @@
         o la segreteria della scuola.
     </div>
 
+</div>
+
+
+<!-- Pulsante invisibile -->
+<div class="invisible-btn-wrapper">
+    <form action="mostra_chiavi.php" method="GET">
+        <button type="submit" class="invisible-btn"></button>
+    </form>
 </div>
 
 </body>
