@@ -26,6 +26,7 @@ if (isset($pi)) {
         }
     }
     if($_SERVER["REQUEST_METHOD"] == "POST"){
+
         $CF_TA = $_POST["cf"];
         $PI = $pi;
         $nome = $_POST["name"];
@@ -35,13 +36,36 @@ if (isset($pi)) {
         $esp = $_POST["esp"];
         $email = $_POST["email"];
         $tel = $_POST["tel"];
-    }
+
+        $titolo = $_POST['titolo'];
+        $descrizione = $_POST['descrizione'];
+        $periodo_i = $_POST['periodo_i'];
+        $periodo_f = $_POST['periodo_f'];
+        $periodo = $_POST['periodo'];
+        $orario_i = $_POST['orario_i'];
+        $orario_f = $_POST['orario_f'];
+        $att_oggetto = $_POST['att_oggetto'];
+        $max_studenti = $_POST['max_studenti'];
+        $competenze_ric = $_POST['competenze_ric'];
+        $ambito = $_POST['ambito'];
+        $PI2 = $pi;
+
     if(isset($CF_TA) && isset($PI) && isset($nome) && isset($cognome) && isset($inq) && isset($comp) && isset($esp) && isset($email) && isset($tel)){
         if(!empty($CF_TA) && !empty($PI) && !empty($nome) && !empty($cognome) && !empty($comp) && !empty($esp) && !empty($email) && !empty($tel)){
             $insert = "INSERT INTO Tutor_aziendale (CF_TA, PI, nome, cognome, inquadramento, competenze, esperienze, email, telefono)
             VALUES ('$CF_TA', '$PI', '$nome', '$cognome', '$inq', '$comp', '$esp', '$email', '$tel');";
             $conn ->query($insert);
         }
+    }
+    if(isset($titolo) && isset($descrizione) && isset($periodo_i) && isset($periodo_f) && isset($periodo) && isset($orario_i) && isset($orario_f) && isset($att_oggetto) && isset($max_studenti) && isset($competenze_ric) && isset($ambito) && isset($PI2) && isset($CF_TA1)){
+        $CF_TA1 = NULL;
+        if(!empty($titolo) && !empty($descrizione) && !empty($periodo_i) && !empty($periodo_f) && !empty($periodo) && !empty($orario_i) && !empty($orario_f) && !empty($att_oggetto) && !empty($max_studenti) && !empty($competenze_ric) && !empty($ambito) && !empty($PI2) && !empty($CF_TA1)){
+            $insert2 = "INSERT INTO Attivita (titolo, descrizione, periodo_i, periodo_f, periodo, orario_i, orario_f, att_oggetto, max_studenti, competenze_ric, ambito, PI2, CF_TA)
+            VALUES ('$titolo', '$descrizione', '$periodo_i', '$periodo_f', '$periodo', '$orario_i', '$orario_f', '$att_oggetto', '$max_studenti', '$competenze_ric', '$ambito', '$PI2', '$CF_TA1');";
+            $conn ->query($insert2);
+        }
+    }
+
     }
 
 }
@@ -248,6 +272,34 @@ if (isset($pi)) {
                 }
             }
         ?>
+        <?php
+            // RECUPERO Attività
+            $attivita = [];
+            if(!empty($azienda['pi'])){
+                $conn = new mysqli("localhost", "root", "", "GestioneFSL");
+                if (!$conn->connect_error) {
+
+                    $pi_safe = $conn->real_escape_string($azienda['pi']);
+                    $query = "SELECT * FROM Attivita WHERE PI = '$pi_safe'";
+                    $ris3 = $conn->query($query);
+
+                    if($ris3 && $ris3->num_rows > 0){
+                        while($row = $ris3->fetch_assoc()){
+                            // Nota le parentesi quadre [] per aggiungere elementi alla lista
+                            $attivita[] = [
+                                "titolo"             => $row['titolo'],
+                                "descrizione"          => $row['descrizione'],
+                                "periodo_i"          => $row['periodo_i'],
+                                "periodo_f"     => $row['periodo_f'],
+                                "att_oggetto"         => $row['att_oggetto'],
+                                "max_studenti"            => $row['max_studenti'],
+                            ];
+                        }
+                    }
+                    $conn->close();
+                }
+            }
+        ?>
 
         <div style="margin-top: 20px; text-align: center;">
             <button id="btnMostraStudenti" onclick="toggleStudenti()" style="padding: 12px 24px; font-size: 16px; background-color: rgb(68, 184, 85); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
@@ -343,6 +395,54 @@ if (isset($pi)) {
             </button>
         </div>
 
+        <div style="margin-top: 30px; overflow-x: auto;">
+            <h3 style="color: #333; margin-bottom: 15px;">Attivita associate alla tua azienda</h3>
+            
+            <?php if (!empty($attivita)): ?>
+                <table style="width: 100%; border-collapse: collapse; background: white; min-width: 600px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 10px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2; text-align: left; border-bottom: 2px solid #ddd;">
+                            <th style="padding: 12px; border: 1px solid #ddd;">titolo</th>
+                            <th style="padding: 12px; border: 1px solid #ddd;">periodo_i</th>
+                            <th style="padding: 12px; border: 1px solid #ddd;">periodo_f</th>
+                            <th style="padding: 12px; border: 1px solid #ddd;">att_oggett</th>
+                            <th style="padding: 12px; border: 1px solid #ddd;">max_studenti</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($attivita as $a): ?>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <strong><?php echo htmlspecialchars($a['titolo']); ?></strong><br>
+                                    <small style="color:#666;">Settore: <?php echo htmlspecialchars($a['max-studenti']); ?></small>
+                                </td>
+                                <td>
+                                    <strong><?php echo htmlspecialchars($a['periodo_i']); ?></strong><br>
+                                </td>
+                                <td>
+                                    <strong><?php echo htmlspecialchars($a['periodo_f']); ?></strong><br>
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; font-size: 14px;">
+                                    <?php echo htmlspecialchars($a['att_oggetto']); ?><br>
+                                    <?php echo htmlspecialchars($a['descrizione']); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p style="color: #666; font-style: italic; text-align: center; background: #f9f9f9; padding: 20px; border-radius: 5px;">
+                    Al momento non hai nessuna attività
+                </p>
+            <?php endif; ?>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <button id="btnAddAtt" onclick="toggleAttRegister()" style="padding: 12px 24px; font-size: 16px; background-color: rgb(68, 184, 85); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
+                Aggiungi attività
+            </button>
+        </div>
+
         <div id="tutorRegister" align="center" style="display: none; margin: 10px;">
             <div class="container_register">
                 <h1 class="main-scritta">
@@ -409,6 +509,91 @@ if (isset($pi)) {
                 </form>
             </div>
         </div>
+        <div id="attRegister" align="center" style="display: none; margin: 10px;">
+            <div class="container_register">
+                <h1 class="main-scritta">
+                    Aggiungi attività
+                </h1>
+                <form action="pagina_principale_azienda.php" method="POST">
+                    <div class="label-wrapper">
+                        <label for="titolo">
+                            Titolo
+                        </label>
+                    </div>
+                    <input type="text" id="titolo" name="titolo" placeholder="Il titolo" required>
+
+                    <div class="label-wrapper">
+                        <label for="descrizione">
+                            Descrizione
+                        </label>
+                    </div>
+                    <input type="text" id="descrizione" name="descrizione" placeholder="La descrizione" required>
+
+                    <div class="label-wrapper">
+                        <label for="periodo_i">
+                            Periodo iniziale
+                        </label>
+                    </div>
+                    <input type="text" id="periodo_i" name="periodo_i" placeholder="Periodo iniziale" required>
+
+                    <div class="label-wrapper">
+                        <label for="periodo_f">
+                            Periodo finale
+                        </label>
+                    </div>
+                    <input type="text" id="periodo_f" name="periodo_f" placeholder="Periodo finale" required>
+
+                    <div class="label-wrapper">
+                        <label for="periodo">
+                            Periodo
+                        </label>
+                    </div>
+                    <input type="number" id="periodo" name="periodo" placeholder="Durata in giorni" required>
+
+                    <div class="label-wrapper">
+                        <label for="orario_i">
+                            Orario iniziale
+                        </label>
+                    </div>
+                    <input type="text" id="orario_i" name="orario_i" placeholder="Orario iniziale" required>
+
+                    <div class="label-wrapper">
+                        <label for="orario_f">
+                            Orario finale
+                        </label>
+                    </div>
+                    <input type="text" id="orario_f" name="orario_f" placeholder="Orario finale" required>
+
+                    <div class="label-wrapper">
+                        <label for="att_oggetto">
+                            Attività oggetto
+                        </label>
+                    </div>
+                    <input type="text" id="att_oggetto" name="att_oggetto" placeholder="Attività oggetto" required>
+
+                    <div class="label-wrapper">
+                        <label for="max_studenti">
+                            Massimo studenti
+                        </label>
+                    </div>
+                    <input type="text" id="max_studenti" name="max_studenti" placeholder="Massimo studenti dell'attività" required>
+                    <div class="label-wrapper">
+                        <label for="competenze_ric">
+                            Competenze richieste
+                        </label>
+                    </div>
+                    <input type="text" id="competenze_ric" name="competenze_ric" placeholder="Competenze richieste" required>
+                    <div class="label-wrapper">
+                        <label for="ambito">
+                            Ambito
+                        </label>
+                    </div>
+                    <input type="text" id="ambito" name="ambito" placeholder="Ambito attività" required>
+                    
+                    <input type="submit">
+                </form>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -437,6 +622,20 @@ if (isset($pi)) {
         } else {
             container.style.display = "none";
             btn.textContent = "Aggiungi Tutor aziendale";
+            btn.style.backgroundColor = "rgb(68, 184, 85)";
+        }
+    }
+    function toggleAttRegister() {
+        var container = document.getElementById("attRegister");
+        var btn = document.getElementById("btnAddAtt");
+        
+        if (container.style.display === "none") {
+            container.style.display = "block";
+            btn.textContent = "Aggiungi attività";
+            btn.style.backgroundColor = "#6c757d";
+        } else {
+            container.style.display = "none";
+            btn.textContent = "Aggiungi attività";
             btn.style.backgroundColor = "rgb(68, 184, 85)";
         }
     }
