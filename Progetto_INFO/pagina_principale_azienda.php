@@ -25,7 +25,7 @@ if (isset($pi)) {
             ];
         }
     }
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_tutor"])) {
 
         $CF_TA = $_POST["cf"];
         $PI = $pi;
@@ -36,6 +36,16 @@ if (isset($pi)) {
         $esp = $_POST["esp"];
         $email = $_POST["email"];
         $tel = $_POST["tel"];
+
+        if (!empty($CF_TA) && !empty($PI) && !empty($nome) && !empty($cognome) && !empty($comp) && !empty($esp) && !empty($email) && !empty($tel)) {
+
+            $insert = "INSERT INTO Tutor_aziendale (CF_TA, PI, nome, cognome, inquadramento, competenze, esperienze, email, telefono)
+                    VALUES ('$CF_TA', '$PI', '$nome', '$cognome', '$inq', '$comp', '$esp', '$email', '$tel')";
+            $conn->query($insert);
+        }
+    }
+
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit_attivita"])) {
 
         $titolo = $_POST['titolo'];
         $descrizione = $_POST['descrizione'];
@@ -49,24 +59,18 @@ if (isset($pi)) {
         $competenze_ric = $_POST['competenze_ric'];
         $ambito = $_POST['ambito'];
         $PI2 = $pi;
+        $CF_TA1 = NULL; // se deve essere NULL nel DB
 
-    if(isset($CF_TA) && isset($PI) && isset($nome) && isset($cognome) && isset($inq) && isset($comp) && isset($esp) && isset($email) && isset($tel)){
-        if(!empty($CF_TA) && !empty($PI) && !empty($nome) && !empty($cognome) && !empty($comp) && !empty($esp) && !empty($email) && !empty($tel)){
-            $insert = "INSERT INTO Tutor_aziendale (CF_TA, PI, nome, cognome, inquadramento, competenze, esperienze, email, telefono)
-            VALUES ('$CF_TA', '$PI', '$nome', '$cognome', '$inq', '$comp', '$esp', '$email', '$tel');";
-            $conn ->query($insert);
-        }
-    }
-    if(isset($titolo) && isset($descrizione) && isset($periodo_i) && isset($periodo_f) && isset($periodo) && isset($orario_i) && isset($orario_f) && isset($att_oggetto) && isset($max_studenti) && isset($competenze_ric) && isset($ambito) && isset($PI2) && isset($CF_TA1)){
-        $CF_TA1 = NULL;
-        if(!empty($titolo) && !empty($descrizione) && !empty($periodo_i) && !empty($periodo_f) && !empty($periodo) && !empty($orario_i) && !empty($orario_f) && !empty($att_oggetto) && !empty($max_studenti) && !empty($competenze_ric) && !empty($ambito) && !empty($PI2) && !empty($CF_TA1)){
-            $insert2 = "INSERT INTO Attivita (titolo, descrizione, periodo_i, periodo_f, periodo, orario_i, orario_f, att_oggetto, max_studenti, competenze_ric, ambito, PI2, CF_TA)
-            VALUES ('$titolo', '$descrizione', '$periodo_i', '$periodo_f', '$periodo', '$orario_i', '$orario_f', '$att_oggetto', '$max_studenti', '$competenze_ric', '$ambito', '$PI2', '$CF_TA1');";
-            $conn ->query($insert2);
+        if (!empty($titolo) && !empty($descrizione) && !empty($periodo_i) && !empty($periodo_f) && !empty($periodo) &&
+            !empty($orario_i) && !empty($orario_f) && !empty($att_oggetto) && !empty($max_studenti) &&
+            !empty($competenze_ric) && !empty($ambito) && !empty($PI2)) {
+
+            $insert2 = "INSERT INTO Attivita (titolo, descrizione, periodo_i, periodo_f, periodo, orario_i, orario_f, att_oggetto, max_studenti, competenze_ric, ambito, PI, CF_TA)
+                        VALUES ('$titolo', '$descrizione', '$periodo_i', '$periodo_f', '$periodo', '$orario_i', '$orario_f', '$att_oggetto', '$max_studenti', '$competenze_ric', '$ambito', '$PI2', NULL)";
+            $conn->query($insert2);
         }
     }
 
-    }
 
 }
 ?>
@@ -123,7 +127,7 @@ if (isset($pi)) {
             font-family: calibri;
             color: rgb(155, 155, 155);
         }
-        input[type="text"], input[type="password"], input[type="email"]{
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"]{
             cursor: pointer;
             width: 70%;
             height: 30px;
@@ -135,7 +139,7 @@ if (isset($pi)) {
             padding: 10px 10px;
             transition: transform 0.2s ease-in-out;
         }
-        input[type="text"]:hover, input[type="password"]:hover,  input[type="email"]:hover, input[type="submit"]:hover{
+        input[type="text"]:hover, input[type="password"]:hover,  input[type="email"]:hover, input[type="submit"]:hover, input[type="number"]:hover{
             transform: scale(1.04);
         }
         input[type="submit"]{
@@ -292,7 +296,7 @@ if (isset($pi)) {
                                 "periodo_i"          => $row['periodo_i'],
                                 "periodo_f"     => $row['periodo_f'],
                                 "att_oggetto"         => $row['att_oggetto'],
-                                "max_studenti"            => $row['max_studenti'],
+                                "max-studenti"            => $row['max_studenti'],
                             ];
                         }
                     }
@@ -505,7 +509,7 @@ if (isset($pi)) {
                     </div>
                     <input type="text" id="tel" name="tel" placeholder="Numero di telefono" required>
                     
-                    <input type="submit">
+                    <input type="submit" name="submit_tutor">
                 </form>
             </div>
         </div>
@@ -576,7 +580,7 @@ if (isset($pi)) {
                             Massimo studenti
                         </label>
                     </div>
-                    <input type="text" id="max_studenti" name="max_studenti" placeholder="Massimo studenti dell'attività" required>
+                    <input type="number" id="max_studenti" name="max_studenti" placeholder="Massimo studenti dell'attività" required>
                     <div class="label-wrapper">
                         <label for="competenze_ric">
                             Competenze richieste
@@ -590,7 +594,7 @@ if (isset($pi)) {
                     </div>
                     <input type="text" id="ambito" name="ambito" placeholder="Ambito attività" required>
                     
-                    <input type="submit">
+                    <input type="submit" name="submit_attivita">
                 </form>
             </div>
         </div>
